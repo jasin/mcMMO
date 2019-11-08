@@ -1,0 +1,43 @@
+---
+Mining:
+    DoubleDrops:
+        Rank_1: 1
+    SuperBreaker:
+        Rank_1: 50
+    BiggerBombs:
+        Rank_1: 100
+    DemolitionExpertise:
+        Rank_1: 100
+    BlastMining:
+        Rank_1: 100
+        Rank_2: 250
+        Rank_3: 350
+        Rank_4: 500
+        Rank_5: 650
+        Rank_6: 750
+        Rank_7: 850
+        Rank_8: 1000
+Excavation:
+    GigaDrill:
+        Rank_1: 50
+    Archaeology:
+        Rank_1: 1
+        Rank_2: 250
+        Rank_3: 350
+        Rank_4: 500
+        Rank_5: 650
+        Rank_6: 750
+        Rank_7: 850
+        Rank_8: 1000
+Woodcutting:
+    TreeFeller:
+        Rank_1: 50
+        Rank_2: 250
+        Rank_3: 500
+        Rank_4: 750
+        Rank_5: 1000
+    LeafBlower:
+        Rank_1: 150
+        Rank_2: 350
+        Rank_3: 650
+...

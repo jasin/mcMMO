@@ -1,0 +1,7 @@
+name: "mcMMO"
+main: jasin.mcmmo.mcMMO
+version: "0.0.1-ALPHA"
+api: ["1.0.0"]
+author: Jasin
+load: POSTWORLD
+

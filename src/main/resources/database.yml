@@ -1,0 +1,15 @@
+---
+# mcMMO database file
+
+# The type of database to use.
+# Supported types: json, yaml
+type: YAML
+
+# Configuration for YAML
+YAML:
+  datafolder: profiles
+
+# Configuration for JSON
+JSON:
+  datafolder: profiles
+...

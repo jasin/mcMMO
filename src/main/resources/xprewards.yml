@@ -1,0 +1,47 @@
+---
+Woodcutting:
+  Log: 70
+  Log2: 80
+  Wood: 70
+  Red_Mushroom_Block: 70
+  Brown_Mushroom_Block: 70
+Excavation:
+  Clay_Block: 40
+  Grass: 40
+  Dirt: 40
+  Podzol: 40
+  Gravel: 40
+  Mycelium: 40
+  Sand: 40
+  Snow_Layer: 20
+  Snow_Block: 40
+  Soul_Sand: 40
+Mining:
+  Magma: 30
+  Coal_Ore: 400
+  Diamond_Ore: 2400
+  Emerald_Ore: 1000
+  End_Bricks: 50
+  Nether_Brick_Block: 50
+  End_Stone: 15
+  Glowstone: 15
+  Gold_Ore: 1300
+  Terracotta: 30
+  Iron_Ore: 900
+  Lapis_Ore: 800
+  Mossy_Cobblestone: 30
+  Netherrack: 15
+  Obsidian: 150
+  Packed_Ice: 15
+# Blue_Ice: 15
+  Nether_Quartz_Ore: 300
+  Redstone_Ore: 600
+  Sandstone: 30
+  Stone: 15
+  Stonebrick: 50
+  Red_Sandstone: 100
+  Prismarine: 70
+  Sea_Lantern: 70
+  Purpur_Block: 200
+  Purpur_Stairs: 250
+...
