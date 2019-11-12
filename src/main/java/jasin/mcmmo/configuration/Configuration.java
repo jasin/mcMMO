@@ -8,7 +8,6 @@ import java.io.*;
 
 public class Configuration {
 
-    private static mcMMO instance;
     private static File database;
     private static File xpRewards;
     private static File extraDrops;
@@ -19,9 +18,7 @@ public class Configuration {
     
     public static void setup() {
 
-        instance = mcMMO.getInstance();
-
-        File dataDir = instance.getDataFolder();
+        File dataDir = mcMMO.plugin.getDataFolder();
         if(!dataDir.exists()) {
             dataDir.mkdirs();
         }
@@ -37,9 +34,9 @@ public class Configuration {
     }
 
     public static void saveResources() {
-        instance.saveResource("database.yml", true);
-        instance.saveResource("drops.yml", true);
-        instance.saveResource("xprewards.yml", true);
+        mcMMO.plugin.saveResource("database.yml", true);
+        mcMMO.plugin.saveResource("drops.yml", true);
+        mcMMO.plugin.saveResource("xprewards.yml", true);
     }
 
     public static void loadConfigs() {

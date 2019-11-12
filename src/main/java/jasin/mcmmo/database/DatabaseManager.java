@@ -6,10 +6,9 @@ public class DatabaseManager {
         
         switch(type) {
             case "YAML":
-            case "JSON":
-                return new FlatFileDatabase(type, path);
+                return new FlatFileDatabase(path);
             case "SQL":
-                return new SQLDatabase();
+                //return new SQLDatabase();
             default:
                 return null;
         }

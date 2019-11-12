@@ -1,78 +1,84 @@
 package jasin.mcmmo.database;
 
-import jasin.mcmmo.database.task.FlatFileReadTask;
+import jasin.mcmmo.mcMMO;
+import jasin.mcmmo.datatypes.player.PlayerProfile;
 
 import java.util.UUID;
 import java.util.HashMap;
 import java.io.*;
 
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.Tag;
+
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.scheduler.AsyncTask;
+
+import java.util.List;
+import java.util.Arrays;
 
 public class FlatFileDatabase implements Database {
     
-    public static final int TYPE_YAML = 0;
-    public static final int TYPE_JSON = 1;
-
-    private String flatFileType;
+    private File file;
+    private Yaml yaml;
     private String path;
-    private HashMap<UUID, Integer> state = new HashMap<>();
+    private PlayerProfile profile;
+    private List<PlayerProfile> profileList;
+    private PlayerProfileRepresenter representer;
 
-    public FlatFileDatabase(String type, String path) {
-        this.flatFileType = type;
-        this.path = path;
-        System.out.println(path);
+    public FlatFileDatabase(String path) {
+        this.path = path + File.separator;
+        this.representer = new PlayerProfileRepresenter();
+        representer.addClassTag(PlayerProfile.class, Tag.MAP);
+        this.yaml = new Yaml(new CustomClassLoaderConstructor(FlatFileDatabase.class.getClassLoader()), representer);
     }
 
-    public Integer getState(Player player) {
-        return this.state.get(player.getUniqueId());
+    public PlayerProfile loadPlayerProfile(String name, UUID uuid, boolean create) {
+        file = new File(this.path + name);
+        if(file.exists()) {
+            try {
+                profile = yaml.loadAs(new FileInputStream(file), PlayerProfile.class);
+            System.out.println(profile.getName());
+            } catch(Exception e) {
+                System.out.println(e);
+            }
+        } else if(create) {
+            try {
+                profile = new PlayerProfile();
+                profile.setName(name);
+                profile.setUUID(uuid.toString());
+                profileList = Arrays.asList(profile);
+                FileWriter writer = new FileWriter(file, false);
+                yaml.dumpAll(profileList.iterator(), writer); 
+            } catch(Exception e) { }
+        }
+
+        return profile;
     }
 
-    public void setState(Player player, Integer state) {
-        this.setStateByPlayer(player.getUniqueId(), state);
-    }
-
-    public void setStateByPlayer(UUID uuid, Integer state) {
-        this.state.put(uuid, state);
-    }
-
-    public boolean isLoading(Player player) {
-        return this.getState(player) == STATE_LOADING;
-    }
-
-    public void load(Player player) {
-        this.setState(player, STATE_LOADING);
+    public void savePlayerProfile(PlayerProfile profile) {
+        file = new File(this.path + profile.getName());
         try {
-            this.loadFromDatabase(player);
-        } catch(FileNotFoundException e) { System.out.println(e); }
+            profileList = Arrays.asList(profile);
+            FileWriter writer = new FileWriter(file, false);
+            yaml.dumpAll(profileList.iterator(), writer);
+        } catch(Exception e) { }
     }
 
-    public  void onLoad(Player player, String[] loadedData) {
-        this.setState(player, null);
+    private class PlayerProfileRepresenter extends Representer {
 
+        private List<String> skipList = Arrays.asList("loaded", "player");
 
-    }
-
-    public void save() {
-         
-    }
-
-    public void saveAll() {
-
-    }
-
-    public void serialize() {
-
-    }
-
-    public void loadFromDatabase(Player player) throws FileNotFoundException {
-        InputStream in = new FileInputStream(new File(this.path));
-        AsyncTask task = new FlatFileReadTask(player, in, 0);
-        Server.getInstance().getScheduler().scheduleAsyncTask(Server.getInstance().getPluginManager().getPlugin("mcMMO"), task);
-    }
-
-    public void saveToDatabase() {
-
+        @Override
+        protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
+            if(skipList.contains(property.getName())) {
+                return null;
+            } else {
+                return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+            }
+        }
     }
 }

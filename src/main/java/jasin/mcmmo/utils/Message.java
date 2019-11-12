@@ -16,6 +16,6 @@ public class Message {
     }
 
     public void consoleSend(String msg) {
-        mcMMO.getInstance().getServer().getConsoleSender().sendMessage(cc(msg));
+        mcMMO.plugin.getServer().getConsoleSender().sendMessage(cc(msg));
     }
 }

@@ -1,4 +1,5 @@
 /*.yml
+profiles/
 src_compile/
 target/
 .metadata/

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import cn.nukkit.Player;
 
-public class SQLDatabase implements Database {
+public class SQLDatabase {
     
     public Integer getState(Player player) {
     

@@ -44,6 +44,6 @@ public abstract class mcMMOCommand extends Command {
     }
 
     public static void registerCommands() {
-        final CommandMap map = (CommandMap)mcMMO.getInstance().getServer().getCommandMap();
+        final CommandMap map = (CommandMap)mcMMO.plugin.getServer().getCommandMap();
     }
 }

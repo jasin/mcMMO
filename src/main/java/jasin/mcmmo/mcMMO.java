@@ -1,6 +1,7 @@
 package jasin.mcmmo;
 
 import jasin.mcmmo.database.*;
+import jasin.mcmmo.listeners.PlayerEventListener;
 import jasin.mcmmo.configuration.Configuration;
 
 import cn.nukkit.plugin.PluginBase;
@@ -13,15 +14,18 @@ import java.io.*;
 
 public class mcMMO extends PluginBase {
 
-    private static mcMMO instance;
+    public static mcMMO plugin;
     private static Config databaseCfg;
     private static String pluginName = "mcMMO";
     private Configuration configuration;
     private Database database;
+
+    // Metadata constants
+    public final static String PLAYER_DATA_KEY = "mcMMO: Player Data";
     
     @Override
     public void onLoad() {
-        instance = this;
+        plugin = this;
         this.getLogger().info(TextFormat.WHITE + "Loaded " + pluginName);
     }
 
@@ -34,10 +38,14 @@ public class mcMMO extends PluginBase {
         String dbtype = databaseCfg.getString("type");
         String playerProfileDir = databaseCfg.getSection(dbtype.toUpperCase()).getString("datafolder");
         String playerProfilePath = this.getDataFolder() + File.separator + playerProfileDir + File.separator; 
-        this.database = DatabaseManager.getDatabaseClass(dbtype, playerProfilePath);
-        System.out.println(this.database);
 
-        this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
+        File dir = new File(playerProfilePath);
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        
+        this.database = DatabaseManager.getDatabaseClass(dbtype, playerProfilePath);
+        getServer().getPluginManager().registerEvents(new PlayerEventListener(), this);
     }
 
     @Override
@@ -45,11 +53,7 @@ public class mcMMO extends PluginBase {
         this.getLogger().info(TextFormat.RED + "Disabled " + pluginName);
     }
 
-    public Database getDatabase() {
+    public Database getDatabaseManager() {
         return this.database;
-    }
-
-    public static mcMMO getInstance() {
-        return instance;
     }
 }
