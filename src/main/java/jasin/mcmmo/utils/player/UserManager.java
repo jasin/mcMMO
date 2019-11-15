@@ -29,4 +29,14 @@ public class UserManager {
 
         return null;
     }
+
+    public static void remove(Player player) {
+        McMMOPlayer mcMMOPlayer = getPlayer(player);
+        mcMMOPlayer.cleanup();
+        player.removeMetadata(mcMMO.PLAYER_DATA_KEY, mcMMO.plugin);
+
+        if(playerDataSet != null && playerDataSet.contains(mcMMOPlayer)) {
+            playerDataSet.remove(mcMMOPlayer);
+        }
+    }
 }

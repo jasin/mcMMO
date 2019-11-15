@@ -3,20 +3,19 @@ package jasin.mcmmo.database;
 import jasin.mcmmo.mcMMO;
 import jasin.mcmmo.datatypes.player.PlayerProfile;
 
-import java.util.UUID;
-import java.util.HashMap;
-import java.io.*;
-
+import cn.nukkit.Player;
+import cn.nukkit.Server;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-
+import java.util.UUID;
+import java.util.HashMap;
+import java.io.*;
 import java.util.List;
 import java.util.Arrays;
 
@@ -27,13 +26,16 @@ public class FlatFileDatabase implements Database {
     private String path;
     private PlayerProfile profile;
     private List<PlayerProfile> profileList;
-    private PlayerProfileRepresenter representer;
+    private Representer representer;
+    private DumperOptions options;
 
-    public FlatFileDatabase(String path) {
-        this.path = path + File.separator;
-        this.representer = new PlayerProfileRepresenter();
+    public FlatFileDatabase(String dir) {
+        path = dir + File.separator;
+        representer = new Representer();
+        options = new DumperOptions();
         representer.addClassTag(PlayerProfile.class, Tag.MAP);
-        this.yaml = new Yaml(new CustomClassLoaderConstructor(FlatFileDatabase.class.getClassLoader()), representer);
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        yaml = new Yaml(new CustomClassLoaderConstructor(FlatFileDatabase.class.getClassLoader()), representer, options);
     }
 
     public PlayerProfile loadPlayerProfile(String name, UUID uuid, boolean create) {
@@ -41,31 +43,38 @@ public class FlatFileDatabase implements Database {
         if(file.exists()) {
             try {
                 profile = yaml.loadAs(new FileInputStream(file), PlayerProfile.class);
-            System.out.println(profile.getName());
             } catch(Exception e) {
-                System.out.println(e);
+                mcMMO.plugin.getLogger().info(e.toString());
             }
         } else if(create) {
             try {
                 profile = new PlayerProfile();
                 profile.setName(name);
                 profile.setUUID(uuid.toString());
-                profileList = Arrays.asList(profile);
+                //profileList = Arrays.asList(profile);
                 FileWriter writer = new FileWriter(file, false);
-                yaml.dumpAll(profileList.iterator(), writer); 
+                yaml.dump(profile, writer); 
             } catch(Exception e) { }
         }
 
         return profile;
     }
 
-    public void savePlayerProfile(PlayerProfile profile) {
+    public boolean savePlayerProfile(PlayerProfile profile) {
         file = new File(this.path + profile.getName());
         try {
-            profileList = Arrays.asList(profile);
+            //profileList = Arrays.asList(profile);
             FileWriter writer = new FileWriter(file, false);
-            yaml.dumpAll(profileList.iterator(), writer);
-        } catch(Exception e) { }
+            yaml.dump(profile, writer);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void cleanupUser(UUID uuid) {
+        // Not used here
     }
 
     private class PlayerProfileRepresenter extends Representer {

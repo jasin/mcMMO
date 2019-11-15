@@ -2,6 +2,7 @@ package jasin.mcmmo.listeners;
 
 import jasin.mcmmo.mcMMO;
 import jasin.mcmmo.utils.player.UserManager;
+import jasin.mcmmo.datatypes.player.McMMOPlayer;
 import jasin.mcmmo.datatypes.player.PlayerProfile;
 import jasin.mcmmo.task.player.PlayerProfileLoading;
 
@@ -24,19 +25,13 @@ public class PlayerEventListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onPlayerQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
+        McMMOPlayer mcMMOPlayer = UserManager.getPlayer(player);
 
-        /*
-         * Is this Needed? UserManager.getPlayer()
-         * already checks for player metadata
-        if(!UserManager.hasPlayerDataKey(player)) {
-            return;
-        } */
-
-        if(UserManager.getPlayer(player) == null) {
+        if(mcMMOPlayer == null) {
             return;
         }
 
-        mcMMO.plugin.getDatabaseManager().savePlayerProfile(new PlayerProfile(player));
+        mcMMOPlayer.logout(true);
     }
 
     public void onPlayerInteract(PlayerInteractEvent e) {

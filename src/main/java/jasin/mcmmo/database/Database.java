@@ -10,6 +10,7 @@ import cn.nukkit.Player;
 
 public interface Database {
 
+    public void cleanupUser(UUID uuid);
+    public boolean savePlayerProfile(PlayerProfile profile);
     public PlayerProfile loadPlayerProfile(String name, UUID uuid, boolean create);
-    public void savePlayerProfile(PlayerProfile profile);
 }

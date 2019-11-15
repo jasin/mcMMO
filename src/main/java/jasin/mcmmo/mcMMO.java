@@ -4,6 +4,8 @@ import jasin.mcmmo.database.*;
 import jasin.mcmmo.listeners.PlayerEventListener;
 import jasin.mcmmo.configuration.Configuration;
 
+import cn.nukkit.Server;
+import cn.nukkit.utils.MainLogger;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Config;
