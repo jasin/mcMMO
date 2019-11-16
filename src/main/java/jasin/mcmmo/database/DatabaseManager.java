@@ -8,7 +8,7 @@ public class DatabaseManager {
             case "YAML":
                 return new FlatFileDatabase(path);
             case "SQL":
-                //return new SQLDatabase();
+                return new SQLDatabase(path);
             default:
                 return null;
         }

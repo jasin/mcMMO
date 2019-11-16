@@ -48,10 +48,7 @@ public class FlatFileDatabase implements Database {
             }
         } else if(create) {
             try {
-                profile = new PlayerProfile();
-                profile.setName(name);
-                profile.setUUID(uuid.toString());
-                //profileList = Arrays.asList(profile);
+                profile = new PlayerProfile(name, uuid);
                 FileWriter writer = new FileWriter(file, false);
                 yaml.dump(profile, writer); 
             } catch(Exception e) { }
@@ -63,7 +60,6 @@ public class FlatFileDatabase implements Database {
     public boolean savePlayerProfile(PlayerProfile profile) {
         file = new File(this.path + profile.getName());
         try {
-            //profileList = Arrays.asList(profile);
             FileWriter writer = new FileWriter(file, false);
             yaml.dump(profile, writer);
             return true;

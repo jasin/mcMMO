@@ -6,6 +6,7 @@ import jasin.mcmmo.datatypes.skills.PrimarySkillType;
 
 import cn.nukkit.Player;
 
+import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 import java.beans.Transient;
@@ -16,46 +17,39 @@ public class PlayerProfile {
      * Properties being dumped by snakeyaml
      */
     private String name;
-    private String UUID;
+    private UUID uuid;
 
     private Player player;
     private boolean loaded;
     private volatile boolean changed;
 
-    private final Map<PrimarySkillType, Integer> skills = new HashMap<PrimarySkillType, Integer>();
+    private Map<PrimarySkillType, Integer> skills = new HashMap<PrimarySkillType, Integer>();
 
-    public PlayerProfile() {}
-    public PlayerProfile(Player player) {
-        this.player = player;
-    }
-
-    public PlayerProfile(String name, String uuid) {
+    public PlayerProfile(String name, UUID uuid) {
         this.name = name;
-        this.UUID = uuid;
+        this.uuid = uuid;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getUUID() {
-        return this.UUID;
+    public UUID getUUID() {
+        return uuid;
     }
 
-    public void setUUID(String uuid) {
-        this.UUID = uuid;
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
-    @Transient
     public Player getPlayer() {
-        return this.player;
+        return player;
     }
 
-    @Transient
     public boolean isLoaded() {
         return true;
     }
@@ -73,7 +67,7 @@ public class PlayerProfile {
     }
 
     public void save(boolean useSync) {
-        PlayerProfile profileCopy = new PlayerProfile(name, UUID);
+        PlayerProfile profileCopy = new PlayerProfile(name, uuid);
         changed = mcMMO.plugin.getDatabaseManager().savePlayerProfile(profileCopy);
 
         if(!changed) {
