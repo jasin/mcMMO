@@ -29,7 +29,7 @@ public enum SuperAbilityType {
     private String abilityRefresh;
     private String abilityPlayerOff;
     
-    private SuperAbilityType(String abilityOn, String AbilityOff, String abilityPlayer, String abilityRefresh, String abilityPlayeroff) {
+    private SuperAbilityType(String abilityOn, String abilityOff, String abilityPlayer, String abilityRefresh, String abilityPlayeroff) {
         this.abilityOn = abilityOn;
         this.abilityOff = abilityOff;
         this.abilityPlayer = abilityPlayer;

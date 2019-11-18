@@ -3,6 +3,7 @@ package jasin.mcmmo.datatypes.player;
 import jasin.mcmmo.mcMMO;
 import jasin.mcmmo.task.player.PlayerProfileSave;
 import jasin.mcmmo.datatypes.skills.PrimarySkillType;
+import jasin.mcmmo.datatypes.skills.SuperAbilityType;
 
 import cn.nukkit.Player;
 
@@ -13,9 +14,6 @@ import java.beans.Transient;
 
 public class PlayerProfile {
 
-    /* 
-     * Properties being dumped by snakeyaml
-     */
     private String name;
     private UUID uuid;
 
@@ -23,11 +21,30 @@ public class PlayerProfile {
     private boolean loaded;
     private volatile boolean changed;
 
-    private Map<PrimarySkillType, Integer> skills = new HashMap<PrimarySkillType, Integer>();
+    private Map<PrimarySkillType, Integer> skill_levels = new HashMap<PrimarySkillType, Integer>();
+    private Map<PrimarySkillType, Integer> experience = new HashMap<PrimarySkillType, Integer>();
+    private Map<SuperAbilityType, Integer> cooldowns = new HashMap<SuperAbilityType, Integer>();
 
     public PlayerProfile(String name, UUID uuid) {
         this.name = name;
         this.uuid = uuid;
+    }
+
+    public PlayerProfile(String name, UUID uuid, boolean loaded) {
+        this.name = name;
+        this.uuid = uuid;
+        this.loaded = loaded;
+    }
+
+    public PlayerProfile(String name, UUID uuid, Map<PrimarySkillType, Integer> lvls, Map<PrimarySkillType, Integer> xp, Map<SuperAbilityType, Integer> timers) {
+        this.name = name;
+        this.uuid = uuid;
+        
+        skill_levels.putAll(lvls);
+        experience.putAll(xp);
+        cooldowns.putAll(timers);
+
+        loaded = true;
     }
 
     public String getName() {
@@ -55,7 +72,15 @@ public class PlayerProfile {
     }
 
     public int getSkillLevel(PrimarySkillType skill) {
-        return skills.get(skill);
+        return skill_levels.get(skill);
+    }
+
+    public int getSkillXpLevel(PrimarySkillType skill) {
+        return experience.get(skill);
+    }
+
+    public int getAbilityCooldown(SuperAbilityType ability) {
+        return cooldowns.get(ability);
     }
 
     public void scheduleSyncSave() {
@@ -67,7 +92,7 @@ public class PlayerProfile {
     }
 
     public void save(boolean useSync) {
-        PlayerProfile profileCopy = new PlayerProfile(name, uuid);
+        PlayerProfile profileCopy = new PlayerProfile(name, uuid, skill_levels, experience, cooldowns);
         changed = mcMMO.plugin.getDatabaseManager().savePlayerProfile(profileCopy);
 
         if(!changed) {

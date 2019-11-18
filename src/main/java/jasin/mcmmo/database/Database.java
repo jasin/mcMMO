@@ -13,4 +13,5 @@ public interface Database {
     public void cleanupUser(UUID uuid);
     public boolean savePlayerProfile(PlayerProfile profile);
     public PlayerProfile loadPlayerProfile(String name, UUID uuid, boolean create);
+    public PlayerProfile loadPlayerProfile(String name, UUID uuid, boolean create,boolean retry);
 }
