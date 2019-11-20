@@ -39,4 +39,8 @@ public class UserManager {
             playerDataSet.remove(mcMMOPlayer);
         }
     }
+
+    public static boolean hasPlayerDataKey(Player player) {
+        return player != null && player.hasMetadata(mcMMO.PLAYER_DATA_KEY);
+    }
 }

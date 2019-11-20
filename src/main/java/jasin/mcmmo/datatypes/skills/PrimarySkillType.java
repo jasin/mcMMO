@@ -20,4 +20,16 @@ public enum PrimarySkillType {
         this.ability = ability;
         this.tool = tool;
     }
+
+    public Class<? extends SkillManager> getManagerClass() {
+        return managerClass;
+    }
+
+    public SuperAbilityType getAbility() {
+        return ability;
+    }
+
+    public ToolType getTool() {
+        return tool;
+    }
 }

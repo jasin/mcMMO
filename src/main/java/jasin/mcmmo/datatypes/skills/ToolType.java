@@ -1,6 +1,6 @@
 package jasin.mcmmo.datatypes.skills;
 
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.Item;
 
 public enum ToolType {
     AXE("Axes.Ability.Lower", "Axes.Ability.Ready"),
@@ -23,7 +23,7 @@ public enum ToolType {
         return raiseTool;
     }
 
-    public boolean inHand(ItemTool itemTool) {
+    public boolean inHand(Item itemTool) {
         switch(this) {
             case AXE:
                 return itemTool.isAxe();
