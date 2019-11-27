@@ -56,13 +56,13 @@ public class PlayerEventListener implements Listener {
         // TODO: finish
         switch(e.getAction()) {
             case RIGHT_CLICK_BLOCK:
-                if(player.isSneaking()) {
+                if(true) {
                     System.out.println(block.toString());    
                 }
                 return;
             case LEFT_CLICK_BLOCK:
                 if(player.isSneaking()) {
-
+                    System.out.println(block.toString());    
                 }
                 break;
             default:
@@ -73,7 +73,7 @@ public class PlayerEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerInteractMonitor(PlayerBlockPickEvent e) {
+    public void onPlayerInteractMonitor(PlayerInteractEvent e) {
         
         Player player = e.getPlayer();
 

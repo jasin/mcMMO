@@ -1,5 +1,6 @@
 package jasin.mcmmo.skills;
 
+import jasin.mcmmo.mcMMO;
 import jasin.mcmmo.datatypes.player.McMMOPlayer;
 import jasin.mcmmo.datatypes.skills.PrimarySkillType;
 import jasin.mcmmo.datatypes.experience.XPGainReason;
@@ -25,6 +26,10 @@ public abstract class SkillManager {
 
     public int getSkillLevel() {
         return mcMMOPlayer.getSkillLevel(skill);
+    }
+
+    public void applyXpGain(float xp, XPGainReason xpGainReason) {
+        mcMMOPlayer.beginXpGain(skill, xp, xpGainReason, XPGainSource.SELF);
     }
 
     public void applyXpGain(float xp, XPGainReason xpGainReason, XPGainSource xpGainSource) {

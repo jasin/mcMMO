@@ -7,6 +7,7 @@ import jasin.mcmmo.utils.metadata.FixedMetadataValue;
 import cn.nukkit.Player;
 
 import java.util.HashSet;
+import com.google.common.collect.ImmutableList;
 
 public class UserManager {
 
@@ -42,5 +43,34 @@ public class UserManager {
 
     public static boolean hasPlayerDataKey(Player player) {
         return player != null && player.hasMetadata(mcMMO.PLAYER_DATA_KEY);
+    }
+
+    public static void saveAll() {
+        if(playerDataSet == null) {
+            return;
+        }
+
+        ImmutableList<McMMOPlayer> playerSyncData = ImmutableList.copyOf(playerDataSet);
+
+        for(McMMOPlayer playerData : playerSyncData) {
+            try {
+                mcMMO.plugin.getLogger().info("Saving player: " + playerData.getPlayerName());
+                playerData.getProfile().save(true);
+            } catch(Exception e) {
+                mcMMO.plugin.getLogger().info("Problem saving: " + playerData.getPlayerName());
+            }
+        }
+                
+        mcMMO.plugin.getLogger().info("Finished saving player data.");
+    }
+
+    public static void clearAll() {
+        for(Player player : mcMMO.plugin.getServer().getOnlinePlayers().values()) {
+            remove(player);
+        }
+
+        if(playerDataSet != null) {
+            playerDataSet.clear();
+        }
     }
 }

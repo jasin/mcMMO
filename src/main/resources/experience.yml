@@ -1,0 +1,70 @@
+---
+Experience_Formula:
+    # Only Linear is supported at this time.
+    Curve: Linear;
+    Linear:
+        base: 1020
+        multiplier: 20
+
+Experience_XP:
+    Woodcutting:
+      Oak Wood: 70
+      Spruce Wood: 70
+      Birch Wood: 70
+      Jungle Wood: 70
+      Acacia Wood: 80
+      Dark Oak Wood: 80
+      Red Mushroom Block: 70
+      Brown Mushroom Block: 70
+      Red Mushroom: 70
+      Brown Mushroom: 70
+    Excavation:
+      Clay Block: 40
+      Grass Block: 40
+      Dirt: 40
+      Coarse Dirt: 40
+      Podzol: 40
+      Gravel: 40
+      Mycelium: 40
+      Sand: 40
+      Red Sand: 40
+      Snow Layer: 20
+      Snow Block: 40
+      Soul Sand: 40
+    Mining:
+      Magma Block: 30
+      Coal Block: 400
+      Diamond Block: 2400
+      Emerald Block: 1000
+      End Stone Bricks: 50
+      Nether Brick: 50
+      End Stone: 15
+      Glowstone: 15
+      Gold Block: 1300
+      Terracotta: 30
+      Iron Block: 900
+      Lapis Lazuli Block: 800
+      Netherrack: 15
+      Obsidian: 150
+      Packed Ice: 15
+      Quartz Ore: 300
+      Redstone Ore: 600
+      Sandstone: 30
+      Chiseled Sandstone: 30
+      Smooth Sandstone: 30
+      Stone: 15
+      Stone Bricks: 50
+      Mossy Stone Bricks: 50
+      Cracked Stone Bricks: 50
+      Chiseled Stone Bricks: 50
+      Red Sandstone: 100
+      Chiseled Red Sandstone: 100
+      Smooth Red Sandstone: 100
+      Prismarine: 70
+      Prismarine Bricks: 70
+      Dark Prismarine: 70
+      Sea Lantern: 70
+      Purpur Block: 200
+      Purpur Pillar: 200
+      Purpur Stairs: 250
+...

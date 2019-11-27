@@ -7,6 +7,7 @@ import jasin.mcmmo.datatypes.skills.SuperAbilityType;
 
 import cn.nukkit.Player;
 
+import java.lang.Math;
 import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
@@ -76,11 +77,30 @@ public class PlayerProfile {
     }
 
     public int getSkillXpLevel(PrimarySkillType skill) {
+        return (int) Math.floor(getSkillXpLevelRaw(skill));
+    }
+
+    public int getSkillXpLevelRaw(PrimarySkillType skill) {
         return experience.get(skill);
+    }
+
+    public int getXpToLevel(PrimarySkillType skill) {
+        int lvl = getSkillLevel(skill);
+        return mcMMO.plugin.getFormulaManager().calculateXpNeeded(lvl);
     }
 
     public int getAbilityCooldown(SuperAbilityType ability) {
         return cooldowns.get(ability);
+    }
+
+    public void addXp(PrimarySkillType skill, float xp) {
+        // Just worry about parent skills for now
+        experience.put(skill, experience.get(skill) + (int) xp);
+    }
+
+    // Finish when and if diminishing returns are implemented
+    public void registerXpGain(PrimarySkillType skill, float xp) {
+        
     }
 
     public void scheduleSyncSave() {

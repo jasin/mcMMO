@@ -2,16 +2,20 @@ package jasin.mcmmo.datatypes.player;
 
 import jasin.mcmmo.mcMMO;
 import jasin.mcmmo.utils.Misc;
+import jasin.mcmmo.utils.EventUtils;
 import jasin.mcmmo.utils.player.UserManager;
 import jasin.mcmmo.utils.player.NotificationManager;
 import jasin.mcmmo.skills.SkillManager;
 import jasin.mcmmo.skills.mining.MiningManager;
+import jasin.mcmmo.skills.excavation.ExcavationManager;
+import jasin.mcmmo.skills.woodcutting.WoodcuttingManager;
 import jasin.mcmmo.datatypes.skills.ToolType;
 import jasin.mcmmo.datatypes.skills.SuperAbilityType;
 import jasin.mcmmo.datatypes.skills.PrimarySkillType;
 import jasin.mcmmo.datatypes.experience.XPGainReason;
 import jasin.mcmmo.datatypes.experience.XPGainSource;
 import jasin.mcmmo.datatypes.interactions.NotificationType;
+import jasin.mcmmo.api.exceptions.InvalidSkillException;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
@@ -22,36 +26,58 @@ import java.util.UUID;
 
 public class McMMOPlayer {
 
+    //private mcMMO plugin;
     private Player player;
     private PlayerProfile profile;
     private String playerName;
     
     private boolean abilityUse = true; 
 
-    private final Map<PrimarySkillType, SkillManager> skillManagers = new HashMap<PrimarySkillType, SkillManager>();
-    private final Map<SuperAbilityType, Boolean> abilityMode = new HashMap<SuperAbilityType, Boolean>();
-    private final Map<ToolType, Boolean> toolMode = new HashMap<ToolType, Boolean>();
+    private final Map<PrimarySkillType, SkillManager> skillManagerMap = new HashMap<PrimarySkillType, SkillManager>();
+    private final Map<SuperAbilityType, Boolean> superAbilityModeMap = new HashMap<SuperAbilityType, Boolean>();
+    private final Map<SuperAbilityType, Boolean> superAbilityInformedMap = new HashMap<SuperAbilityType, Boolean>();
+    private final Map<ToolType, Boolean> toolModeMap = new HashMap<ToolType, Boolean>();
 
     public McMMOPlayer(Player player, PlayerProfile profile) {
+        //this.plugin = plugin;
         this.player = player;
         this.profile = profile;
         this.playerName = player.getName();
         UUID uuid = player.getUniqueId();
 
-        try {
-            for(PrimarySkillType primarySkillType : PrimarySkillType.values()) {
-                skillManagers.put(primarySkillType, primarySkillType.getManagerClass().getConstructor(McMMOPlayer.class).newInstance(this));
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        initSkillManagers();
 
         for(SuperAbilityType superAbilityType : SuperAbilityType.values()) {
-            abilityMode.put(superAbilityType, false);
+            superAbilityModeMap.put(superAbilityType, false);
+            superAbilityInformedMap.put(superAbilityType, true);
         }
 
         for(ToolType toolType : ToolType.values()) {
-            toolMode.put(toolType, false);
+            toolModeMap.put(toolType, false);
+        }
+    }
+
+    private void initSkillManagers() {
+        for(PrimarySkillType primarySkillType : PrimarySkillType.values()) {
+            try {
+                initManager(primarySkillType);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void initManager(PrimarySkillType primarySkillType) throws InvalidSkillException {
+        switch(primarySkillType) {
+            case EXCAVATION:
+                skillManagerMap.put(primarySkillType, new ExcavationManager(this));
+                break;
+            case MINING:
+                skillManagerMap.put(primarySkillType, new MiningManager(this));
+                break;
+            case WOODCUTTING:
+                skillManagerMap.put(primarySkillType, new WoodcuttingManager(this));
+                break;
         }
     }
 
@@ -69,32 +95,53 @@ public class McMMOPlayer {
 
     public void beginXpGain(PrimarySkillType skill, float xp, XPGainReason reason, XPGainSource source) {
         
-        beginUnsharedXpGain(skill, xp, reason, source);
+        applyXpGain(skill, xp, reason, source);
     }
 
+    // Unused presently
     public void beginUnsharedXpGain(PrimarySkillType skill, float xp, XPGainReason reason, XPGainSource source) {
         
         applyXpGain(skill, xp, reason, source);
     }
+    
+    /*
+     * TODO finish this
+     * Checks for childskill and adjust xp before calling applyXpGain();
+     */
+    public void isChildSkill(PrimarySkillType skill, float xp, XPGainReason reason, XPGainSource source) {
+        applyXpGain(skill, xp, reason, source);
+    }
 
     public void applyXpGain(PrimarySkillType skill, float xp, XPGainReason reason, XPGainSource source) {
-        // finish this, not important now
+        if(!EventUtils.handleXpGainEvent(player, skill, xp, reason)) {
+            return;
+        }
+
+        checkLevelGain(skill, reason, source);
+    }
+
+    public void checkLevelGain(PrimarySkillType skill, XPGainReason reason, XPGainSource source ) {
+
     }
 
     public void resetAbilityMode() {
         // Finish this function
     }
 
-    public boolean getAbilityUse() {
+    public boolean getAllowAbilityUse() {
         return abilityUse;
     }
 
-    public boolean getAbilityMode(SuperAbilityType ability) {
-        return abilityMode.get(ability);
+    public boolean getSuperAbilityMode(SuperAbilityType ability) {
+        return superAbilityModeMap.get(ability);
+    }
+
+    public boolean getToolPreparationMode(ToolType toolType) {
+        return toolModeMap.get(toolType);
     }
 
     public void setToolPreparationMode(ToolType tool, boolean isPrepared) {
-        toolMode.put(tool, isPrepared);
+        toolModeMap.put(tool, isPrepared);
     }
 
     // TODO make cooldown time dynamic
@@ -127,33 +174,39 @@ public class McMMOPlayer {
     }
 
     public MiningManager getMiningManager() {
-        return (MiningManager) skillManagers.get(PrimarySkillType.MINING);
+        return (MiningManager) skillManagerMap.get(PrimarySkillType.MINING);
+    }
+
+    public ExcavationManager getExcavationManager() {
+        return (ExcavationManager) skillManagerMap.get(PrimarySkillType.EXCAVATION);
+    }
+
+    public WoodcuttingManager getWoodCuttingManager() {
+        return (WoodcuttingManager) skillManagerMap.get(PrimarySkillType.WOODCUTTING);
     }
 
     public void processAbilityActivation(PrimarySkillType skill) {
         Item inHand = player.getInventory().getItemInHand();
         
-        if(!getAbilityUse()) {
+        if(!getAllowAbilityUse()) {
             return;
         }
 
         for(SuperAbilityType superAbilityType : SuperAbilityType.values()) {
-            if(getAbilityMode(superAbilityType)) {
+            if(getSuperAbilityMode(superAbilityType)) {
                 return;
             }
         }
 
-        SuperAbilityType ability = skill.getAbility();
-        ToolType tool = skill.getTool();
+        SuperAbilityType ability = skill.getSuperAbility();
+        ToolType tool = skill.getPrimarySkillToolType();
 
         // TODO finish this as needed
-        if(tool.inHand(inHand)) {
+        if(tool.inHand(inHand) && !getToolPreparationMode(tool)) {
             int timeRemaining = calculateTimeRemaining(ability);
 
-            //if(!getAbilityMode(ability) && timeRemaining > 0) {
-            if(true) {
-                System.out.println("NotificationManager called");
-                NotificationManager.sendPlayerInformation(player, NotificationType.ABILITY_COOLDOWN, "Skills.TooTired", String.valueOf(timeRemaining));
+            if(!getSuperAbilityMode(ability) && timeRemaining > 0) {
+                mcMMO.plugin.getNotificationManager().sendPlayerInformation(player, NotificationType.ABILITY_COOLDOWN, "Skills.TooTired", String.valueOf(timeRemaining));
                 return;
             }
 
